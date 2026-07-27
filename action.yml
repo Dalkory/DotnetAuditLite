@@ -1,0 +1,32 @@
+name: DotnetAudit Lite
+description: Generate a local static .NET preflight report
+inputs:
+  path:
+    description: Repository directory to scan
+    required: false
+    default: .
+  output:
+    description: Markdown report path
+    required: false
+    default: dotnet-preflight-report.md
+runs:
+  using: composite
+  steps:
+    - name: Set up .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Build DotnetAudit Lite
+      shell: bash
+      run: dotnet build "${{ github.action_path }}/DotnetAuditLite.csproj" --configuration Release
+    - name: Generate static preflight
+      shell: bash
+      run: >-
+        dotnet run
+        --project "${{ github.action_path }}/DotnetAuditLite.csproj"
+        --configuration Release
+        --no-build
+        --
+        --path "${{ inputs.path }}"
+        --output "${{ inputs.output }}"
+        --static-only
