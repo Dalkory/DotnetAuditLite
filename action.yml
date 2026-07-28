@@ -9,6 +9,10 @@ inputs:
     description: Markdown report path
     required: false
     default: dotnet-preflight-report.md
+  sarif-output:
+    description: SARIF 2.1.0 report path
+    required: false
+    default: dotnet-preflight.sarif
 runs:
   using: composite
   steps:
@@ -29,4 +33,5 @@ runs:
         --
         --path "${{ inputs.path }}"
         --output "${{ inputs.output }}"
+        --sarif "${{ inputs.sarif-output }}"
         --static-only

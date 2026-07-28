@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
@@ -26,17 +27,28 @@ var scanner = new PreflightScanner(root);
 var report = await scanner.ScanAsync(options.StaticOnly);
 Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
 await File.WriteAllTextAsync(reportPath, report.ToMarkdown(), new UTF8Encoding(false));
+if (!string.IsNullOrWhiteSpace(options.SarifOutput))
+{
+    var sarifPath = Path.GetFullPath(
+        Path.IsPathRooted(options.SarifOutput)
+            ? options.SarifOutput
+            : Path.Combine(Environment.CurrentDirectory, options.SarifOutput));
+    Directory.CreateDirectory(Path.GetDirectoryName(sarifPath)!);
+    await File.WriteAllTextAsync(sarifPath, report.ToSarif(), new UTF8Encoding(false));
+    Console.WriteLine($"SARIF report written to {sarifPath}");
+}
 
 Console.WriteLine($"Preflight report written to {reportPath}");
 Console.WriteLine($"Projects: {report.Projects.Count}; findings: {report.Findings.Count}; commands: {report.Commands.Count}");
 return report.Commands.Any(command => command.ExitCode is not 0 and not null) ? 1 : 0;
 
-internal sealed record CliOptions(string Path, string Output, bool StaticOnly, bool ShowHelp)
+internal sealed record CliOptions(string Path, string Output, string? SarifOutput, bool StaticOnly, bool ShowHelp)
 {
     public static CliOptions Parse(string[] args)
     {
         var path = ".";
         var output = "dotnet-preflight-report.md";
+        string? sarifOutput = null;
         var staticOnly = false;
         var showHelp = false;
 
@@ -50,6 +62,9 @@ internal sealed record CliOptions(string Path, string Output, bool StaticOnly, b
                 case "--output" when index + 1 < args.Length:
                     output = args[++index];
                     break;
+                case "--sarif" when index + 1 < args.Length:
+                    sarifOutput = args[++index];
+                    break;
                 case "--static-only":
                     staticOnly = true;
                     break;
@@ -62,7 +77,7 @@ internal sealed record CliOptions(string Path, string Output, bool StaticOnly, b
             }
         }
 
-        return new CliOptions(path, output, staticOnly, showHelp);
+        return new CliOptions(path, output, sarifOutput, staticOnly, showHelp);
     }
 
     public static void PrintHelp()
@@ -77,6 +92,7 @@ internal sealed record CliOptions(string Path, string Output, bool StaticOnly, b
             Options:
               --path <directory>  Repository to inspect. Default: current directory.
               --output <file>     Markdown report path. Default: dotnet-preflight-report.md.
+              --sarif <file>      Also write a SARIF 2.1.0 report for optional code-scanning upload.
               --static-only       Skip build, test and vulnerable-package commands.
               -h, --help          Show help.
             """);
@@ -462,7 +478,109 @@ internal sealed record PreflightReport(
         return builder.ToString();
     }
 
+    public string ToSarif()
+    {
+        var distinctRules = Findings
+            .GroupBy(finding => RuleId(finding.Title), StringComparer.Ordinal)
+            .Select(group => new
+            {
+                id = group.Key,
+                name = group.Key,
+                shortDescription = new { text = group.First().Title },
+                help = new
+                {
+                    text = "Review the evidence, confirm false positives and apply a repository-specific remediation.",
+                    markdown = "Review the evidence, confirm false positives and apply a repository-specific remediation."
+                }
+            })
+            .ToArray();
+
+        var results = Findings.Select(finding =>
+        {
+            var location = ParseLocation(finding.Evidence);
+            return new
+            {
+                ruleId = RuleId(finding.Title),
+                level = SarifLevel(finding.Severity),
+                message = new { text = $"{finding.Title}. Evidence: {finding.Evidence}" },
+                locations = location is null
+                    ? Array.Empty<object>()
+                    : new object[]
+                    {
+                        new
+                        {
+                            physicalLocation = new
+                            {
+                                artifactLocation = new { uri = location.Value.Path },
+                                region = location.Value.Line is null ? null : new { startLine = location.Value.Line }
+                            }
+                        }
+                    }
+            };
+        }).ToArray();
+
+        var sarif = new
+        {
+            version = "2.1.0",
+            schema = "https://json.schemastore.org/sarif-2.1.0.json",
+            runs = new[]
+            {
+                new
+                {
+                    tool = new
+                    {
+                        driver = new
+                        {
+                            name = "DotnetAudit Lite",
+                            informationUri = "https://github.com/Dalkory/DotnetAuditLite",
+                            semanticVersion = "0.2.0",
+                            rules = distinctRules
+                        }
+                    },
+                    results
+                }
+            }
+        };
+
+        return JsonSerializer.Serialize(
+            sarif,
+            new JsonSerializerOptions { WriteIndented = true })
+            .Replace("\"schema\":", "\"$schema\":", StringComparison.Ordinal);
+    }
+
     private static string Escape(string value) => value.Replace("|", "\\|", StringComparison.Ordinal).Replace("\r", " ", StringComparison.Ordinal).Replace("\n", " ", StringComparison.Ordinal);
+
+    private static string RuleId(string title)
+    {
+        var normalized = Regex.Replace(title.ToLowerInvariant(), "[^a-z0-9]+", "-").Trim('-');
+        return string.IsNullOrWhiteSpace(normalized) ? "dotnet-preflight-finding" : $"dotnet-preflight-{normalized}";
+    }
+
+    private static string SarifLevel(string severity) => severity switch
+    {
+        "High" => "error",
+        "Medium" => "warning",
+        _ => "note"
+    };
+
+    private static (string Path, int? Line)? ParseLocation(string evidence)
+    {
+        var match = Regex.Match(evidence, @"^(?<path>[^:\r\n]+(?:/[^:\r\n]+)*)(?::(?<line>\d+))?");
+        if (!match.Success)
+        {
+            return null;
+        }
+
+        var path = match.Groups["path"].Value.Replace('\\', '/');
+        if (path.Contains(' ') && !path.Contains('/'))
+        {
+            return null;
+        }
+
+        return (
+            path,
+            int.TryParse(match.Groups["line"].Value, out var line) ? line : null);
+    }
 
     private static int SeverityOrder(string severity) => severity switch
     {

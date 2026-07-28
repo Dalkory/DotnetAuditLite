@@ -18,7 +18,8 @@ Requirements: .NET 8 SDK or newer.
 ```powershell
 dotnet run --project DotnetAuditLite.csproj -- `
   --path C:\path\to\repository `
-  --output dotnet-preflight-report.md
+  --output dotnet-preflight-report.md `
+  --sarif dotnet-preflight.sarif
 ```
 
 For a fast scan that does not execute the target repository:
@@ -36,8 +37,9 @@ verification instead of guessing.
 ## GitHub Action
 
 The included composite action builds the tool and performs a static preflight.
-It uploads nothing by itself. A consuming workflow can publish the generated
-Markdown as an artifact if desired.
+It writes Markdown and SARIF 2.1.0 but uploads nothing by itself. A consuming
+workflow can publish the Markdown as an artifact and, where GitHub code scanning
+is available, optionally upload the SARIF file.
 
 ```yaml
 - uses: actions/checkout@v4
@@ -45,7 +47,33 @@ Markdown as an artifact if desired.
   with:
     path: .
     output: dotnet-preflight-report.md
+    sarif-output: dotnet-preflight.sarif
 ```
+
+Optional upload step:
+
+```yaml
+- uses: github/codeql-action/upload-sarif@v3
+  with:
+    sarif_file: dotnet-preflight.sarif
+```
+
+GitHub code-scanning availability and repository permissions depend on the
+repository type and plan. The local Markdown report remains usable without
+uploading anything.
+
+## Paid interpretation path
+
+The automated report is designed to be a safe first signal. A fixed-scope human
+review can turn it into one of four concrete next steps:
+
+- one-problem diagnosis;
+- Legacy .NET Modernization Assessment;
+- AI Repo Enablement for .NET;
+- reliability, observability or full code audit.
+
+Current formats and contact:
+https://dotnet-audit-studio-services.dtauskanov3.chatgpt.site/en
 
 ## Boundaries
 
