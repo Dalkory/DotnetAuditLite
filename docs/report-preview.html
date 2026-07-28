@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DotnetAudit Lite report</title>
+<style>
+  *{box-sizing:border-box}body{margin:0;background:#071019;color:#eaf2ff;font:16px/1.5 Inter,Segoe UI,sans-serif}
+  main{width:1180px;min-height:660px;padding:48px 56px;background:radial-gradient(circle at 90% 0,#173b55,transparent 420px)}
+  .top{display:flex;justify-content:space-between;align-items:flex-start}.tag{color:#72d7ff;letter-spacing:.14em;font-size:12px;font-weight:800}
+  h1{font-size:48px;line-height:1;margin:12px 0 8px;letter-spacing:-.04em}.local{border:1px solid #2f5064;border-radius:999px;padding:10px 15px;color:#bdf36a}
+  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:34px 0}.metric,.panel{background:#101b27;border:1px solid #26384b;border-radius:18px}
+  .metric{padding:18px}.metric small{color:#91a4b8}.metric strong{display:block;font-size:28px;margin-top:4px}
+  .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.panel{padding:22px}h2{font-size:14px;letter-spacing:.12em;color:#72d7ff;margin:0 0 16px}
+  .finding{display:grid;grid-template-columns:74px 1fr;gap:12px;padding:11px 0;border-top:1px solid #26384b}.finding:first-of-type{border-top:0}
+  .sev{font-size:12px;font-weight:800}.high{color:#ff8e8e}.medium{color:#ffd66f}.low{color:#72d7ff}.ok{color:#bdf36a}
+  code{color:#ced9e7}.foot{margin-top:18px;color:#91a4b8;font-size:13px}
+</style>
+</head>
+<body><main>
+  <div class="top"><div><div class="tag">DOTNETAUDIT LITE · PREFLIGHT</div><h1>Evidence before assumptions.</h1><div style="color:#91a4b8">Local Markdown + SARIF 2.1.0 · source code is not uploaded</div></div><div class="local">● local-first</div></div>
+  <div class="metrics"><div class="metric"><small>Projects discovered</small><strong>4</strong></div><div class="metric"><small>Findings</small><strong>7</strong></div><div class="metric"><small>External uploads</small><strong>0</strong></div></div>
+  <div class="grid">
+    <section class="panel"><h2>PRIORITIZED FINDINGS</h2>
+      <div class="finding"><span class="sev high">HIGH</span><code>net6.0: out of support</code></div>
+      <div class="finding"><span class="sev medium">MEDIUM</span><code>No health-check wiring detected</code></div>
+      <div class="finding"><span class="sev medium">MEDIUM</span><code>No OpenTelemetry wiring detected</code></div>
+      <div class="finding"><span class="sev low">LOW</span><code>Warnings are not explicitly treated as errors</code></div>
+    </section>
+    <section class="panel"><h2>COMMAND RESULTS</h2>
+      <div class="finding"><span class="sev ok">PASS</span><code>dotnet build</code></div>
+      <div class="finding"><span class="sev ok">PASS</span><code>dotnet test</code></div>
+      <div class="finding"><span class="sev ok">PASS</span><code>package vulnerability scan</code></div>
+      <div class="foot">Each result stays reviewable in Markdown and can optionally appear in GitHub Code Scanning.</div>
+    </section>
+  </div>
+</main></body></html>

@@ -1,0 +1,35 @@
+name: self-test
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run DotnetAudit Lite
+        uses: ./
+        with:
+          path: .
+          output: dotnet-preflight-report.md
+          sarif-output: dotnet-preflight.sarif
+
+      - name: Upload Markdown report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-preflight-report
+          path: dotnet-preflight-report.md
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: dotnet-preflight.sarif
+          category: dotnet-audit-lite-self-test

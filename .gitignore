@@ -1,3 +1,5 @@
 bin/
 obj/
 dotnet-preflight-report.md
+dotnet-preflight.sarif
+artifacts/

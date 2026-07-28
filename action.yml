@@ -1,5 +1,5 @@
-name: DotnetAudit Lite
-description: Generate a local static .NET preflight report
+name: DotnetAudit Lite Preflight
+description: Generate local Markdown and SARIF preflight reports for a .NET repository
 inputs:
   path:
     description: Repository directory to scan
@@ -35,3 +35,6 @@ runs:
         --output "${{ inputs.output }}"
         --sarif "${{ inputs.sarif-output }}"
         --static-only
+branding:
+  icon: shield
+  color: blue

@@ -1,17 +1,67 @@
 # DotnetAudit Lite
 
-A time-boxed, local-first preflight for .NET repositories. The tool generates a
-Markdown report without uploading source code.
+[![self-test](https://github.com/Dalkory/DotnetAuditLite/actions/workflows/self-test.yml/badge.svg)](https://github.com/Dalkory/DotnetAuditLite/actions/workflows/self-test.yml)
+[![release](https://img.shields.io/github/v/release/Dalkory/DotnetAuditLite)](https://github.com/Dalkory/DotnetAuditLite/releases)
 
-It checks:
+Local-first .NET repository preflight that creates readable Markdown and SARIF
+2.1.0 without uploading source code to an external service.
+
+```yaml
+- uses: Dalkory/DotnetAuditLite@v1
+```
+
+![DotnetAudit Lite report preview](docs/report-preview.png)
+
+## What it checks
 
 - target frameworks and an embedded .NET 8/9/10 support snapshot;
 - `Nullable` and warnings-as-errors settings;
-- common CI, Docker, health-check, and OpenTelemetry signals;
+- common CI, Docker, health-check and OpenTelemetry signals;
 - sensitive-looking files and assignments without printing detected values;
-- optionally: `dotnet build`, `dotnet test`, and vulnerable transitive packages.
+- optional local `dotnet build`, `dotnet test` and vulnerable-package checks.
 
-## Run
+## Complete workflow
+
+```yaml
+name: .NET preflight
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Dalkory/DotnetAuditLite@v1
+        with:
+          path: .
+          output: dotnet-preflight-report.md
+          sarif-output: dotnet-preflight.sarif
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-preflight-report
+          path: dotnet-preflight-report.md
+
+      - uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: dotnet-preflight.sarif
+          category: dotnet-audit-lite
+```
+
+The Action performs a static preflight. It writes both files but does not upload
+them by itself, so teams can use only the local Markdown artifact if they do not
+want Code Scanning.
+
+## Run locally
 
 Requirements: .NET 8 SDK or newer.
 
@@ -22,62 +72,53 @@ dotnet run --project DotnetAuditLite.csproj -- `
   --sarif dotnet-preflight.sarif
 ```
 
-For a fast scan that does not execute the target repository:
+For a scan that never executes the target repository:
 
 ```powershell
 dotnet run --project DotnetAuditLite.csproj -- --path C:\path\to\repository --static-only
 ```
 
-The lifecycle snapshot is based on the
+The lifecycle snapshot follows the
 [official Microsoft .NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy)
-as of 2026-07-27: .NET 8 and .NET 9 end support on 2026-11-10; .NET 10 ends
-support on 2028-11-14. Future versions are deliberately marked for manual
-verification instead of guessing.
+as of 2026-07-27. Future framework versions are marked for manual verification
+instead of being guessed.
 
-## GitHub Action
+## Example result
 
-The included composite action builds the tool and performs a static preflight.
-It writes Markdown and SARIF 2.1.0 but uploads nothing by itself. A consuming
-workflow can publish the Markdown as an artifact and, where GitHub code scanning
-is available, optionally upload the SARIF file.
+```text
+# DotnetAudit Lite — preflight report
 
-```yaml
-- uses: actions/checkout@v4
-- uses: ./path/to/DotnetAuditLite
-  with:
-    path: .
-    output: dotnet-preflight-report.md
-    sarif-output: dotnet-preflight.sarif
+Projects discovered: 4
+Findings: 7
+
+HIGH    net6.0: out of support
+MEDIUM  No health-check wiring detected
+MEDIUM  No OpenTelemetry wiring detected
+LOW     Warnings are not explicitly treated as errors
 ```
 
-Optional upload step:
+The sample consumer repository shows the Action, downloadable Markdown artifact
+and Code Scanning integration:
+https://github.com/Dalkory/DotnetAuditLiteSample
 
-```yaml
-- uses: github/codeql-action/upload-sarif@v3
-  with:
-    sarif_file: dotnet-preflight.sarif
-```
+## Limitations
 
-GitHub code-scanning availability and repository permissions depend on the
-repository type and plan. The local Markdown report remains usable without
-uploading anything.
+- This is a signal-oriented pre-check, not proof of production readiness.
+- Secret matching is intentionally conservative and never prints detected values.
+- Static checks cannot prove runtime reliability, authorization correctness or
+  regulatory compliance.
+- SARIF upload works for public repositories; private repositories need the
+  applicable GitHub Code Security plan and settings.
+- Findings must be reviewed before sharing them outside the repository owner’s
+  organization.
 
-## Paid interpretation path
+## Paid interpretation
 
-The automated report is designed to be a safe first signal. A fixed-scope human
-review can turn it into one of four concrete next steps:
+Want priorities instead of a raw report? Open
+[Request paid interpretation](https://github.com/Dalkory/DotnetAuditLite/issues/new?template=request-paid-interpretation.yml)
+with only non-confidential context. A fixed-scope human review can turn the
+preflight into a one-problem diagnosis, AI Repo Enablement, modernization
+assessment or remediation plan.
 
-- one-problem diagnosis;
-- Legacy .NET Modernization Assessment;
-- AI Repo Enablement for .NET;
-- reliability, observability or full code audit.
-
-Current formats and contact:
+Formats and contact:
 https://dotnet-audit-studio.work1sdfsdfs.chatgpt.site/en
-
-## Boundaries
-
-This is a lead-magnet pre-check, not a replacement for engineering judgment. It
-does not promise complete secret discovery, vulnerability coverage, production
-reliability, or regulatory compliance. Always review findings before sharing
-them outside the repository owner’s organization.

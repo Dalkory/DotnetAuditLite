@@ -1,0 +1,42 @@
+name: Request paid interpretation
+description: Ask for a fixed-scope human review of a DotnetAudit Lite report
+title: "[Interpretation] "
+labels:
+  - paid-interpretation
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share only non-confidential context. Do not paste source code, credentials,
+        customer data or private report contents into a public issue.
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: Desired outcome
+      options:
+        - Prioritized interpretation of one preflight report
+        - Diagnosis of one concrete .NET problem
+        - AI Repo Enablement for one repository
+        - Legacy modernization assessment
+        - Reliability or observability remediation plan
+    validations:
+      required: true
+  - type: input
+    id: repository
+    attributes:
+      label: Public repository URL (optional)
+      description: Leave blank for a private repository.
+  - type: textarea
+    id: context
+    attributes:
+      label: Non-confidential context
+      description: Describe the business goal and the two or three most important findings.
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy confirmation
+      options:
+        - label: I have not included source code, secrets, credentials or personal/customer data.
+          required: true
