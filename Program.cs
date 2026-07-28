@@ -495,6 +495,7 @@ internal sealed record PreflightReport(
             })
             .ToArray();
 
+        var fallbackLocation = Projects.FirstOrDefault()?.Path ?? "README.md";
         var results = Findings.Select(finding =>
         {
             var location = ParseLocation(finding.Evidence);
@@ -503,19 +504,17 @@ internal sealed record PreflightReport(
                 ruleId = RuleId(finding.Title),
                 level = SarifLevel(finding.Severity),
                 message = new { text = $"{finding.Title}. Evidence: {finding.Evidence}" },
-                locations = location is null
-                    ? Array.Empty<object>()
-                    : new object[]
+                locations = new object[]
+                {
+                    new
                     {
-                        new
+                        physicalLocation = new
                         {
-                            physicalLocation = new
-                            {
-                                artifactLocation = new { uri = location.Value.Path },
-                                region = location.Value.Line is null ? null : new { startLine = location.Value.Line }
-                            }
+                            artifactLocation = new { uri = location?.Path ?? fallbackLocation },
+                            region = location?.Line is null ? null : new { startLine = location.Value.Line }
                         }
                     }
+                }
             };
         }).ToArray();
 
