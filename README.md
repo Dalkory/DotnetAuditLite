@@ -73,7 +73,7 @@ review can turn it into one of four concrete next steps:
 - reliability, observability or full code audit.
 
 Current formats and contact:
-https://dotnet-audit-studio-services.dtauskanov3.chatgpt.site/en
+https://dotnet-audit-studio.work1sdfsdfs.chatgpt.site/en
 
 ## Boundaries
 
