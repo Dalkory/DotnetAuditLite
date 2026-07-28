@@ -533,7 +533,7 @@ internal sealed record PreflightReport(
                         {
                             name = "DotnetAudit Lite",
                             informationUri = "https://github.com/Dalkory/DotnetAuditLite",
-                            semanticVersion = "0.2.0",
+                            semanticVersion = "1.0.0",
                             rules = distinctRules
                         }
                     },
@@ -544,7 +544,11 @@ internal sealed record PreflightReport(
 
         return JsonSerializer.Serialize(
             sarif,
-            new JsonSerializerOptions { WriteIndented = true })
+            new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            })
             .Replace("\"schema\":", "\"$schema\":", StringComparison.Ordinal);
     }
 
