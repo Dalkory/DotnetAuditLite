@@ -2,6 +2,7 @@
 
 [![self-test](https://github.com/Dalkory/DotnetAuditLite/actions/workflows/self-test.yml/badge.svg)](https://github.com/Dalkory/DotnetAuditLite/actions/workflows/self-test.yml)
 [![release](https://img.shields.io/github/v/release/Dalkory/DotnetAuditLite)](https://github.com/Dalkory/DotnetAuditLite/releases)
+[![GitHub Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-DotnetAudit%20Lite-blue?logo=github)](https://github.com/marketplace/actions/dotnetaudit-lite-preflight)
 
 Local-first .NET repository preflight that creates readable Markdown and SARIF
 2.1.0 without uploading source code to an external service.
@@ -29,6 +30,10 @@ package before installation, and use `--static-only` when the target repository
 must not execute build or test commands.
 
 ## Use as a GitHub Action
+
+Install from
+[GitHub Marketplace](https://github.com/marketplace/actions/dotnetaudit-lite-preflight)
+or add the Action directly:
 
 ```yaml
 - uses: Dalkory/DotnetAuditLite@v1
