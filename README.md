@@ -8,15 +8,21 @@ Local-first .NET repository preflight that creates readable Markdown and SARIF
 
 ## Install as a .NET tool
 
+The NuGet package is prepared and locally verified. Once `DotnetAuditLite`
+is published on NuGet.org, install it globally with:
+
 ```bash
 dotnet tool install --global DotnetAuditLite
 dotnet-audit-lite --path .
 ```
 
-The package can also be installed into an isolated directory:
+Until the NuGet publication is complete, clone this repository, build the
+package, and install it into an isolated directory from the local package
+source:
 
 ```bash
-dotnet tool install DotnetAuditLite --tool-path ./.tools
+dotnet pack -c Release -o ./artifacts/nuget
+dotnet tool install DotnetAuditLite --tool-path ./.tools --add-source ./artifacts/nuget --version 1.0.0
 ./.tools/dotnet-audit-lite --path . --static-only
 ```
 
