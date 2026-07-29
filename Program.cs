@@ -1,10 +1,18 @@
 using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 var options = CliOptions.Parse(args);
+if (options.ShowVersion)
+{
+    var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "unknown";
+    Console.WriteLine($"DotnetAuditLite {version}");
+    return 0;
+}
+
 if (options.ShowHelp)
 {
     CliOptions.PrintHelp();
@@ -42,7 +50,13 @@ Console.WriteLine($"Preflight report written to {reportPath}");
 Console.WriteLine($"Projects: {report.Projects.Count}; findings: {report.Findings.Count}; commands: {report.Commands.Count}");
 return report.Commands.Any(command => command.ExitCode is not 0 and not null) ? 1 : 0;
 
-internal sealed record CliOptions(string Path, string Output, string? SarifOutput, bool StaticOnly, bool ShowHelp)
+internal sealed record CliOptions(
+    string Path,
+    string Output,
+    string? SarifOutput,
+    bool StaticOnly,
+    bool ShowHelp,
+    bool ShowVersion)
 {
     public static CliOptions Parse(string[] args)
     {
@@ -51,6 +65,7 @@ internal sealed record CliOptions(string Path, string Output, string? SarifOutpu
         string? sarifOutput = null;
         var staticOnly = false;
         var showHelp = false;
+        var showVersion = false;
 
         for (var index = 0; index < args.Length; index++)
         {
@@ -72,12 +87,15 @@ internal sealed record CliOptions(string Path, string Output, string? SarifOutpu
                 case "--help":
                     showHelp = true;
                     break;
+                case "--version":
+                    showVersion = true;
+                    break;
                 default:
                     throw new ArgumentException($"Unknown or incomplete argument: {args[index]}");
             }
         }
 
-        return new CliOptions(path, output, sarifOutput, staticOnly, showHelp);
+        return new CliOptions(path, output, sarifOutput, staticOnly, showHelp, showVersion);
     }
 
     public static void PrintHelp()
@@ -87,13 +105,14 @@ internal sealed record CliOptions(string Path, string Output, string? SarifOutpu
             DotnetAudit Lite — local .NET repository preflight
 
             Usage:
-              dotnet run --project DotnetAuditLite.csproj -- [options]
+              dotnet-audit-lite [options]
 
             Options:
               --path <directory>  Repository to inspect. Default: current directory.
               --output <file>     Markdown report path. Default: dotnet-preflight-report.md.
               --sarif <file>      Also write a SARIF 2.1.0 report for optional code-scanning upload.
               --static-only       Skip build, test and vulnerable-package commands.
+              --version           Show the installed tool version.
               -h, --help          Show help.
             """);
     }

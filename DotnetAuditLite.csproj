@@ -5,5 +5,22 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dotnet-audit-lite</ToolCommandName>
+    <PackageId>DotnetAuditLite</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Dotnet Audit Studio</Authors>
+    <Description>Local-first .NET repository preflight with Markdown and SARIF output.</Description>
+    <PackageTags>dotnet;tool;audit;preflight;sarif;ci;security;observability</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Dalkory/DotnetAuditLite</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Dalkory/DotnetAuditLite.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageOutputPath>artifacts/nuget</PackageOutputPath>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 </Project>

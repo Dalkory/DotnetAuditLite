@@ -6,6 +6,26 @@
 Local-first .NET repository preflight that creates readable Markdown and SARIF
 2.1.0 without uploading source code to an external service.
 
+## Install as a .NET tool
+
+```bash
+dotnet tool install --global DotnetAuditLite
+dotnet-audit-lite --path .
+```
+
+The package can also be installed into an isolated directory:
+
+```bash
+dotnet tool install DotnetAuditLite --tool-path ./.tools
+./.tools/dotnet-audit-lite --path . --static-only
+```
+
+The tool runs with the current user's permissions. Review the repository and
+package before installation, and use `--static-only` when the target repository
+must not execute build or test commands.
+
+## Use as a GitHub Action
+
 ```yaml
 - uses: Dalkory/DotnetAuditLite@v1
 ```
@@ -61,7 +81,7 @@ The Action performs a static preflight. It writes both files but does not upload
 them by itself, so teams can use only the local Markdown artifact if they do not
 want Code Scanning.
 
-## Run locally
+## Run from source
 
 Requirements: .NET 8 SDK or newer.
 
