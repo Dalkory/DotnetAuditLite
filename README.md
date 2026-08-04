@@ -150,4 +150,4 @@ preflight into a one-problem diagnosis, AI Repo Enablement, modernization
 assessment or remediation plan.
 
 Formats and contact:
-https://dotnet-audit-studio.work1sdfsdfs.chatgpt.site/en
+https://dotnet-audit-studio.dtauskanov3.chatgpt.site/en
