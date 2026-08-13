@@ -9,8 +9,8 @@ Local-first .NET repository preflight that creates readable Markdown and SARIF
 
 ## Install as a .NET tool
 
-`DotnetAuditLite` 1.0.0 is published on
-[NuGet.org](https://www.nuget.org/packages/DotnetAuditLite/1.0.0). Install it
+`DotnetAuditLite` 1.0.1 is published on
+[NuGet.org](https://www.nuget.org/packages/DotnetAuditLite/1.0.1). Install it
 globally with:
 
 ```bash
@@ -21,7 +21,7 @@ dotnet-audit-lite --path .
 To install into an isolated directory instead:
 
 ```bash
-dotnet tool install DotnetAuditLite --tool-path ./.tools --version 1.0.0
+dotnet tool install DotnetAuditLite --tool-path ./.tools --version 1.0.1
 ./.tools/dotnet-audit-lite --path . --static-only
 ```
 
