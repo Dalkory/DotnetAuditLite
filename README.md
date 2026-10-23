@@ -150,10 +150,10 @@ preflight into a one-problem diagnosis, AI Repo Enablement, modernization
 assessment or remediation plan.
 
 Prefer a request without a public GitHub issue? Use the
-[project intake form](https://dotnet-audit-studio.dtaatdaa.chatgpt.site/en?intent=studio#request)
+[project intake form](https://dotnet-audit-studio.dtauskanov3.chatgpt.site/en?intent=studio#request)
 with a short description of the desired outcome. Do not send secrets, private
 code or confidential report contents. Scope, acceptance, price, timing and any
 permitted AI use are agreed before paid work starts.
 
 Formats and contact:
-https://dotnet-audit-studio.dtaatdaa.chatgpt.site/en
+https://dotnet-audit-studio.dtauskanov3.chatgpt.site/en

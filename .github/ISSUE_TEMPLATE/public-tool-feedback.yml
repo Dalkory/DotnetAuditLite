@@ -11,8 +11,8 @@ body:
         Local execution and hidden detected secret values do not make a report safe to publish.
         Вопрос будет публичным. Используйте публичный или синтетический пример; не прикладывайте клиентский код, отчёты и персональные данные.
 
-        For a paid project, use [studio requests](https://dotnet-audit-studio.dtaatdaa.chatgpt.site/en?intent=studio#request).
-        For paid interpretation or mentoring, use [review requests](https://dotnet-audit-studio.dtaatdaa.chatgpt.site/en?intent=paid-review#request).
+        For a paid project, use [studio requests](https://dotnet-audit-studio.dtauskanov3.chatgpt.site/en?intent=studio#request).
+        For paid interpretation or mentoring, use [review requests](https://dotnet-audit-studio.dtauskanov3.chatgpt.site/en?intent=paid-review#request).
         Scope, acceptance, price, time, permitted materials and any private AI use are agreed before work.
         Public tool feedback does not include bespoke client diagnosis or a support response-time commitment.
   - type: input
