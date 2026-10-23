@@ -6,3 +6,6 @@ contact_links:
   - name: Paid learning review / Платный разбор
     url: https://dotnet-audit-studio.dtaatdaa.chatgpt.site/en?intent=paid-review#request
     about: Discuss a paid .NET review or mentoring session. Do not send private code, secrets or personal data in a public issue.
+  - name: Report a security vulnerability / Сообщить об уязвимости
+    url: https://github.com/Dalkory/DotnetAuditLite/security/policy
+    about: Follow the private reporting instructions. Do not post suspected vulnerabilities or sensitive material in public issues.
