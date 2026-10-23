@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Paid studio project / Студийная задача
+    url: https://dotnet-audit-studio.dtaatdaa.chatgpt.site/en?intent=studio#request
+    about: Discuss a bounded paid result. Scope, acceptance, price, time and permitted materials are agreed before work.
+  - name: Paid learning review / Платный разбор
+    url: https://dotnet-audit-studio.dtaatdaa.chatgpt.site/en?intent=paid-review#request
+    about: Discuss a paid .NET review or mentoring session. Do not send private code, secrets or personal data in a public issue.

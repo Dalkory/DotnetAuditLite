@@ -1,0 +1,45 @@
+name: Public tool feedback / Ошибка инструмента
+description: Report a reproducible problem in DotnetAuditLite using public or synthetic inputs.
+title: "[Tool feedback] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **This issue and its contents will be public.**
+        Report a problem in the public tool or its documentation using a public or synthetic example.
+        Do not attach Markdown or SARIF reports, client logs, private code, secrets, personal data, or absolute private paths.
+        Local execution and hidden detected secret values do not make a report safe to publish.
+        Вопрос будет публичным. Используйте публичный или синтетический пример; не прикладывайте клиентский код, отчёты и персональные данные.
+
+        For a paid project, use [studio requests](https://dotnet-audit-studio.dtaatdaa.chatgpt.site/en?intent=studio#request).
+        For paid interpretation or mentoring, use [review requests](https://dotnet-audit-studio.dtaatdaa.chatgpt.site/en?intent=paid-review#request).
+        Scope, acceptance, price, time, permitted materials and any private AI use are agreed before work.
+        Public tool feedback does not include bespoke client diagnosis or a support response-time commitment.
+  - type: input
+    id: public_example
+    attributes:
+      label: Public or synthetic example / Публичный или синтетический пример
+      description: Link a public example or describe a minimal synthetic input. Do not provide a private repository URL.
+      placeholder: Public repository path and commit, or a short synthetic input description
+    validations:
+      required: true
+  - type: input
+    id: tool_version
+    attributes:
+      label: Tool and runtime version / Версия инструмента и runtime
+      description: If known, give the tool version or public commit, .NET SDK version and operating system. Omit usernames and local paths.
+  - type: textarea
+    id: steps_and_result
+    attributes:
+      label: Steps, expected and observed / Шаги, ожидание и наблюдение
+      description: Use placeholder paths in commands. Describe the problem without copying actual reports, private logs or client code.
+      render: text
+    validations:
+      required: true
+  - type: checkboxes
+    id: public_materials
+    attributes:
+      label: Public contents / Публичные материалы
+      options:
+        - label: I checked that this issue uses only public or synthetic material and contains no private reports, client code, secrets or personal data.
+          required: true
